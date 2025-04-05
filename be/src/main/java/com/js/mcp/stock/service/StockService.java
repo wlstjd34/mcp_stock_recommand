@@ -3,20 +3,18 @@ package com.js.mcp.stock.service;
 import com.js.mcp.stock.dto.StockDto;
 import com.js.mcp.stock.jpa.Stock;
 import com.js.mcp.stock.jpa.StockRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.ArrayList;
-import java.util.Map;
+import java.util.List;
 
 @Service
+@AllArgsConstructor
 public class StockService {
-    @Autowired
-    private StockApiCollector stockApiCollector;
+    private final StockApiCollector stockApiCollector;
 
-    @Autowired
-    private StockRepository stockRepository;
+    private final StockRepository stockRepository;
 
     private final String externalApiUrl = "/* TODO: Get the external API URL from the user */";
 
@@ -26,7 +24,7 @@ public class StockService {
 
         List<Stock> stocks = new ArrayList<>();
         for (StockDto stockData : stockDataList) {
-            Stock stock = stockData.toEntity();
+            stocks.add(stockData.toEntity());
         }
 
         stockRepository.saveAll(stocks);
