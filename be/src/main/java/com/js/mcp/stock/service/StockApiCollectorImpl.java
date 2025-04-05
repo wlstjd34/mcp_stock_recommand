@@ -1,5 +1,6 @@
 package com.js.mcp.stock.service;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.js.mcp.stock.dto.StockDto;
@@ -77,6 +78,7 @@ public class StockApiCollectorImpl implements StockApiCollector {
             // JSON 문자열을 Map으로 변환
             ObjectMapper mapper = new ObjectMapper();
             mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+            mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
             StockDto data = mapper.readValue(responseBody, StockDto.class);
             System.out.println(data);
 
