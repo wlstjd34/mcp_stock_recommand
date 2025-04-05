@@ -1,4 +1,4 @@
-package com.js.mcp.stock.jpa;
+package com.js.mcp.stock.jpa.entity;
 
 import lombok.Data;
 import org.hibernate.annotations.UpdateTimestamp;

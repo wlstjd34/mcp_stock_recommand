@@ -1,6 +1,6 @@
 package com.js.mcp.stock.dto;
 
-import com.js.mcp.stock.jpa.Stock;
+import com.js.mcp.stock.jpa.entity.Stock;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
