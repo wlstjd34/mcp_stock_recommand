@@ -1,14 +1,17 @@
 package com.js.mcp.stock.jpa.entity;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Index;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.persistence.Index;
+
 import java.time.LocalDateTime;
 
+@NoArgsConstructor
 @Data
 @Entity
 @Table(name = "stock", indexes = {
