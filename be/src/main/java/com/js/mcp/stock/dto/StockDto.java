@@ -1,62 +1,116 @@
 package com.js.mcp.stock.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.js.mcp.stock.jpa.entity.Stock;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class StockDto {
+    @JsonProperty("Symbol")
     private String symbol;
+    @JsonProperty("AssetType")
     private String assetType;
+    @JsonProperty("Name")
     private String name;
+    @JsonProperty("Description")
     private String description;
+    @JsonProperty("CIK")
     private String cik;
+    @JsonProperty("Exchange")
     private String exchange;
+    @JsonProperty("Currency")
     private String currency;
+    @JsonProperty("Country")
     private String country;
+    @JsonProperty("Sector")
     private String sector;
+    @JsonProperty("Industry")
     private String industry;
+    @JsonProperty("Address")
     private String address;
+    @JsonProperty("FiscalYearEnd")
     private String fiscalYearEnd;
+    @JsonProperty("LatestQuarter")
     private String latestQuarter;
+    @JsonProperty("MarketCapitalization")
     private Long marketCapitalization;
+    @JsonProperty("EBITDA")
     private Long ebitda;
+    @JsonProperty("PERatio")
     private Double peRatio;
+    @JsonProperty("PEGRatio")
     private Double pegRatio;
+    @JsonProperty("BookValue")
     private Double bookValue;
+    @JsonProperty("DividendPerShare")
     private Double dividendPerShare;
+    @JsonProperty("DividendYield")
     private Double dividendYield;
+    @JsonProperty("EPS")
     private Double eps;
+    @JsonProperty("RevenuePerShareTTM")
     private Double revenuePerShareTTM;
+    @JsonProperty("ProfitMargin")
     private Double profitMargin;
+    @JsonProperty("OperatingMarginTTM")
     private Double operatingMarginTTM;
+    @JsonProperty("ReturnOnAssetsTTM")
     private Double returnOnAssetsTTM;
+    @JsonProperty("ReturnOnEquityTTM")
     private Double returnOnEquityTTM;
+    @JsonProperty("RevenueTTM")
     private Long revenueTTM;
+    @JsonProperty("GrossProfitTTM")
     private Long grossProfitTTM;
+    @JsonProperty("DilutedEPSTTM")
     private Double dilutedEPSTTM;
+    @JsonProperty("QuarterlyEarningsGrowthYOY")
     private Double quarterlyEarningsGrowthYOY;
+    @JsonProperty("QuarterlyRevenueGrowthYOY")
     private Double quarterlyRevenueGrowthYOY;
+    @JsonProperty("AnalystTargetPrice")
     private Double analystTargetPrice;
+    @JsonProperty("AnalystRatingStrongBuy")
     private Integer analystRatingStrongBuy;
+    @JsonProperty("AnalystRatingBuy")
     private Integer analystRatingBuy;
+    @JsonProperty("AnalystRatingHold")
     private Integer analystRatingHold;
+    @JsonProperty("AnalystRatingSell")
     private Integer analystRatingSell;
+    @JsonProperty("AnalystRatingStrongSell")
     private Integer analystRatingStrongSell;
+    @JsonProperty("TrailingPE")
     private Double trailingPE;
+    @JsonProperty("ForwardPE")
     private Double forwardPE;
+    @JsonProperty("PriceToSalesRatioTTM")
     private Double priceToSalesRatioTTM;
+    @JsonProperty("PriceToBookRatio")
     private Double priceToBookRatio;
+    @JsonProperty("EVToRevenue")
     private Double evToRevenue;
+    @JsonProperty("EVToEBITDA")
     private Double evToEBITDA;
+    @JsonProperty("Beta")
     private Double beta;
+    @JsonProperty("52WeekHigh")
     private Double _52WeekHigh;
+    @JsonProperty("52WeekLow")
     private Double _52WeekLow;
+    @JsonProperty("50DayMovingAverage")
     private Double _50DayMovingAverage;
+    @JsonProperty("200DayMovingAverage")
     private Double _200DayMovingAverage;
+    @JsonProperty("SharesOutstanding")
     private Long sharesOutstanding;
+    @JsonProperty("DividendDate")
     private String dividendDate;
+    @JsonProperty("ExDividendDate")
     private String exDividendDate;
 
     public Stock toEntity() {
