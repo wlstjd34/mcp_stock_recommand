@@ -2,7 +2,9 @@ package com.js.mcp.stock;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 
+@EntityScan(basePackages = "com.js.mcp.stock.jpa")
 @SpringBootApplication
 public class StockApplication {
 
