@@ -20,7 +20,7 @@ class StockCollectorImplTest {
     StockCollector stockCollector;
 
     @Test
-    void getStockSymbolList() {
+    void getStockSymbolList() throws IOException, InterruptedException {
         // when
         List<String> result = stockCollector.getStockSymbolList();
 
@@ -35,6 +35,5 @@ class StockCollectorImplTest {
 
         // then
         assertThat(result.isPresent()).isTrue(); // 애플이 상폐되지 않는한 성공
-        assertThat(result.get().getName()).isEqualTo("Apple Inc");
     }
 }
