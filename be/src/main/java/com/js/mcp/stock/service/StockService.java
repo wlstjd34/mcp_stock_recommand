@@ -12,13 +12,13 @@ import java.util.List;
 @Service
 @AllArgsConstructor
 public class StockService {
-    private final StockApiCollector stockApiCollector;
+    private final StockCollector stockCollector;
 
     private final StockRepository stockRepository;
 
     public void collectStockData() {
-        List<String> stockCode = stockApiCollector.getStockSymbolList();
-        List<StockDto> stockDataList = stockApiCollector.getStockInformations(stockCode);
+        List<String> stockCode = stockCollector.getStockSymbolList();
+        List<StockDto> stockDataList = stockCollector.getStockInformations(stockCode);
 
         List<Stock> stocks = new ArrayList<>();
         for (StockDto stockData : stockDataList) {

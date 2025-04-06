@@ -15,14 +15,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @TestPropertySource(locations = "classpath:test.properties")
-class StockApiCollectorImplTest {
+class StockCollectorImplTest {
     @Autowired
-    StockApiCollector stockApiCollector;
+    StockCollector stockCollector;
 
     @Test
     void getStockSymbolList() {
         // when
-        List<String> result = stockApiCollector.getStockSymbolList();
+        List<String> result = stockCollector.getStockSymbolList();
 
         // then
         assertThat(result).isNotEmpty();
@@ -31,7 +31,7 @@ class StockApiCollectorImplTest {
     @Test
     void getStockInformation() throws IOException, InterruptedException {
         // when
-        Optional<StockDto> result = stockApiCollector.getStockInformation("AAPL");
+        Optional<StockDto> result = stockCollector.getStockInformation("AAPL");
 
         // then
         assertThat(result.isPresent()).isTrue(); // 애플이 상폐되지 않는한 성공
