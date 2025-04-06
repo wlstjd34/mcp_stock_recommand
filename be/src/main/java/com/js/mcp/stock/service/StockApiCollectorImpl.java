@@ -6,14 +6,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.js.mcp.stock.dto.StockDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.URI;
-import java.net.URL;
-import java.net.URLConnection;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -21,10 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.server.ResponseStatusException;
 
-@Component
+@Service
 @Slf4j
 public class StockApiCollectorImpl implements StockApiCollector {
 
@@ -40,17 +37,20 @@ public class StockApiCollectorImpl implements StockApiCollector {
         String csvUrl = "https://www.alphavantage.co/query?function=LISTING_STATUS&apikey=" + ALPHAVANTAGE_KEY;
 
         try {
-            URL url = new URL(csvUrl);
-            URLConnection connection = url.openConnection();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            HttpClient client = HttpClient.newHttpClient();
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(csvUrl))
+                    .build();
 
-            String line;
-            while ((line = reader.readLine()) != null) {
-                result.add(line.split(",")[0]);
-            }
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            String responseBody = response.body();
 
-            reader.close();
-        } catch (IOException e) {
+            // Split the response body into lines and add the first element of each line to the result list
+            result = responseBody.lines()
+                    .map(line -> line.split(",")[0])
+                    .collect(Collectors.toList());
+
+        } catch (IOException | InterruptedException e) {
             e.printStackTrace();
             // Handle the exception appropriately, e.g., log it or throw a custom exception
         }
