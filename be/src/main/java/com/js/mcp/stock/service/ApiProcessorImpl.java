@@ -1,8 +1,8 @@
 package com.js.mcp.stock.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
@@ -12,6 +12,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
 @Slf4j
+@Component
 public class ApiProcessorImpl implements ApiProcessor {
 
     private static final int MAX_RETRY_COUNT = 5;
