@@ -90,6 +90,7 @@ public class StockCollectorImpl implements StockCollector {
             }
 
             StockDto stockDto = objectMapper.readValue(metric.toString(), StockDto.class);
+            stockDto.setSymbol(symbol);
             log.debug("Stock information for symbol {}: {}", symbol, stockDto);
             return Optional.of(stockDto);
 

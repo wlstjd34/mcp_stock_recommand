@@ -30,8 +30,7 @@ import java.time.LocalDate;
 public class Stock {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String symbol;
 
     private Double tenDayAverageTradingVolume;
     private Double thirteenWeekPriceReturnDaily;

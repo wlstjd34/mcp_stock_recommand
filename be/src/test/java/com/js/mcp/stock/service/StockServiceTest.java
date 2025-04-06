@@ -38,12 +38,12 @@ class StockServiceTest {
         // then
         Collection<Stock> result = stockRepository.findAll();
         assertThat(result).hasSize(1);
-        assertThat(result.iterator().next().getTenDayAverageTradingVolume()).isEqualTo(0.1234);
+        assertThat(result.iterator().next().getSymbol()).isEqualTo("AAPL");
     }
 
     StockDto makeDummyDto() {
         StockDto stockDto = new StockDto();
-        stockDto.setTenDayAverageTradingVolume(0.1234);
+        stockDto.setSymbol("AAPL");
         return stockDto;
     }
 }

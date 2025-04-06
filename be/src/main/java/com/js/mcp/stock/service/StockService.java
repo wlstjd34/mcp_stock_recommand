@@ -3,6 +3,7 @@ package com.js.mcp.stock.service;
 import com.js.mcp.stock.dto.StockDto;
 import com.js.mcp.stock.jpa.entity.Stock;
 import com.js.mcp.stock.jpa.repo.StockRepository;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +18,9 @@ public class StockService {
 
     private final StockRepository stockRepository;
 
+    @Transactional
     public void collectStockData() throws IOException, InterruptedException {
+        stockRepository.deleteAll();
         List<String> stockCode = stockCollector.getStockSymbolList();
         List<StockDto> stockDataList = stockCollector.getStockInformations(stockCode);
 

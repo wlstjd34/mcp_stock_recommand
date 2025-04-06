@@ -12,6 +12,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @AllArgsConstructor
 @NoArgsConstructor
 public class StockDto {
+    private String symbol;
     @JsonProperty("10DayAverageTradingVolume")
     private Double tenDayAverageTradingVolume;
     @JsonProperty("13WeekPriceReturnDaily")
@@ -265,6 +266,7 @@ public class StockDto {
 
     public Stock toEntity() {
         Stock stock = new Stock();
+        stock.setSymbol(this.symbol);
         stock.setTenDayAverageTradingVolume(this.tenDayAverageTradingVolume);
         stock.setThirteenWeekPriceReturnDaily(this.thirteenWeekPriceReturnDaily);
         stock.setTwentySixWeekPriceReturnDaily(this.twentySixWeekPriceReturnDaily);
