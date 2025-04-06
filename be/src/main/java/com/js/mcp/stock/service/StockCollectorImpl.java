@@ -65,7 +65,8 @@ public class StockCollectorImpl implements StockCollector {
                 Optional<StockDto> dto = getStockInformation(symbol);
                 dto.ifPresent(stockDtos::add);
             } catch (Exception e) {
-                log.info("API Collecting is over. Insert collected data");
+                log.error(e.getMessage());
+                log.error("API Collecting is over. Insert collected data");
                 break;
             }
         }
@@ -76,7 +77,7 @@ public class StockCollectorImpl implements StockCollector {
     @Override
     public Optional<StockDto> getStockInformation(String symbol) throws IOException, InterruptedException {
         String url = FINNHUB_BASE_URL + "/stock/metric?symbol=" + symbol + "&metric=all&token=" + finnhubToken;
-        log.info("Requesting stock information for symbol: {} from URL: {}", symbol, url);
+        log.info("Requesting stock information for symbol: {}", symbol);
 
         String responseBody = apiProcessor.callApi(url);
 
