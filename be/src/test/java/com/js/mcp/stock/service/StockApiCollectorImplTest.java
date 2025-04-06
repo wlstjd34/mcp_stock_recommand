@@ -4,6 +4,7 @@ import com.js.mcp.stock.dto.StockDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.TestPropertySource;
 
 import java.io.IOException;
 import java.util.List;
@@ -13,6 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 
 @SpringBootTest
+@TestPropertySource(locations = "classpath:test.properties")
 class StockApiCollectorImplTest {
     @Autowired
     StockApiCollector stockApiCollector;
