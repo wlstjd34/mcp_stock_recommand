@@ -6,6 +6,7 @@ import com.js.mcp.stock.jpa.repo.StockRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,7 +17,7 @@ public class StockService {
 
     private final StockRepository stockRepository;
 
-    public void collectStockData() {
+    public void collectStockData() throws IOException, InterruptedException {
         List<String> stockCode = stockCollector.getStockSymbolList();
         List<StockDto> stockDataList = stockCollector.getStockInformations(stockCode);
 
