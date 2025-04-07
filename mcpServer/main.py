@@ -38,10 +38,10 @@ def execute_query(query, params=None):
             conn.close()
 
 @mcp.tool()
-def get_lowest_pe_ttm(limit:int=10) -> str: 
+def get_lowest_pe_ttm(limit:int=100) -> str: 
     query = """
         SELECT * FROM Stock
-        WHERE pettm IS NOT NULL
+        WHERE pettm IS NOT NULL AND pettm != 0.0
         ORDER BY pettm ASC
         LIMIT %s
         """
@@ -49,10 +49,10 @@ def get_lowest_pe_ttm(limit:int=10) -> str:
     return records
 
 @mcp.tool()
-def get_lowest_pb_quarterly(limit:int=10) -> str:
+def get_lowest_pb_quarterly(limit:int=100) -> str:
     query = """
         SELECT * FROM Stock
-        WHERE pb_quarterly IS NOT NULL
+        WHERE pb_quarterly IS NOT NULL and pb_quarterly != 0.0
         ORDER BY pb_quarterly ASC
         LIMIT %s
         """
@@ -60,10 +60,10 @@ def get_lowest_pb_quarterly(limit:int=10) -> str:
     return records
 
 @mcp.tool()
-def get_highest_dividend_yield(limit:int=10) -> str:
+def get_highest_dividend_yield(limit:int=100) -> str:
     query = """
         SELECT * FROM Stock
-        WHERE dividend_yield_indicated_annual IS NOT NULL
+        WHERE dividend_yield_indicated_annual IS NOT NULL and dividend_yield_indicated_annual != 0.0
         ORDER BY dividend_yield_indicated_annual DESC
         LIMIT %s
         """
@@ -71,10 +71,10 @@ def get_highest_dividend_yield(limit:int=10) -> str:
     return records
 
 @mcp.tool()
-def get_highest_roe_ttm(limit:int=10) -> str:
+def get_highest_roe_ttm(limit:int=100) -> str:
     query = """
         SELECT * FROM Stock
-        WHERE roettm IS NOT NULL
+        WHERE roettm IS NOT NULL and roettm !=0.0
         ORDER BY roettm DESC
         LIMIT %s
         """
