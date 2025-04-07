@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,8 +40,15 @@ public class StockCollectorImpl implements StockCollector {
 
     @Override
     public List<String> getStockSymbolList() throws IOException, InterruptedException {
-        String exchange = "US";
-        String url = FINNHUB_BASE_URL + "/stock/symbol?exchange=" + exchange + "&token=" + finnhubToken;
+        List<String> nasdaqSymbols = getSymbolList("XNAS");
+        List<String> nyseSymbols = getSymbolList("XNYS");
+
+        nasdaqSymbols.addAll(nyseSymbols);
+        return nasdaqSymbols;
+    }
+
+    private List<String> getSymbolList(String mic) throws IOException, InterruptedException {
+        String url = FINNHUB_BASE_URL + "/stock/symbol?exchange=US&currency=USD&mic=" + mic + "&token=" + finnhubToken;
         String responseBody = apiProcessor.callApi(url);
 
         try {
