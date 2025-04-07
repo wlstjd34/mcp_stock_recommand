@@ -68,6 +68,7 @@ public class StockCollectorImpl implements StockCollector {
     public List<StockDto> getStockInformations(List<String> symbolList) {
         List<StockDto> stockDtos = new ArrayList<>();
 
+        int remain = symbolList.size();
         for (String symbol : symbolList) {
             try {
                 Optional<StockDto> dto = getStockInformation(symbol);
@@ -77,6 +78,7 @@ public class StockCollectorImpl implements StockCollector {
                 log.error("API Collecting is over. Insert collected data");
                 break;
             }
+            log.info("processing remain : [{} / {}]", remain--, symbolList.size());
         }
 
         return stockDtos;
