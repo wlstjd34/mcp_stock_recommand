@@ -9,6 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -19,7 +21,12 @@ public class StockItemProcessor implements ItemProcessor<StockCode, Stock> {
     @Override
     public Stock process(StockCode stockCode) throws Exception {
         log.info("Fetching stock information for code: {}", stockCode.getCode());
-        StockDto stockDto = stockCollector.getStockInformations(java.util.Collections.singletonList(stockCode.getCode())).get(0);
-        return stockDto.toEntity();
+        Optional<StockDto> stockDto = stockCollector.getStockInformation(stockCode.getCode());
+        if (stockDto.isPresent()) {
+            return stockDto.get().toEntity();
+        } else {
+            log.warn("Stock code [{}] not found. Skipping...", stockCode.getCode());
+            return null; // 데이터가 없을 경우 null 반환
+        }
     }
 }
