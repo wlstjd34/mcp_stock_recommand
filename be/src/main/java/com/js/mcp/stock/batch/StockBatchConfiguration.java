@@ -2,6 +2,8 @@ package com.js.mcp.stock.batch;
 
 import com.js.mcp.stock.dto.StockDto;
 import com.js.mcp.stock.jpa.entity.Stock;
+import com.js.mcp.stock.jpa.entity.StockCode;
+import com.js.mcp.stock.jpa.repo.StockCodeRepository;
 import com.js.mcp.stock.jpa.repo.StockRepository;
 import com.js.mcp.stock.service.StockCollector;
 import lombok.RequiredArgsConstructor;
@@ -12,13 +14,20 @@ import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.core.step.tasklet.Tasklet;
+import org.springframework.batch.item.ItemReader;
+import org.springframework.batch.item.database.JdbcPagingItemReader;
+import org.springframework.batch.item.database.PagingQueryProvider;
+import org.springframework.batch.item.database.support.SqlPagingQueryProviderFactoryBean;
 import org.springframework.batch.repeat.RepeatStatus;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import java.util.ArrayList;
+import javax.sql.DataSource;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Configuration
@@ -27,56 +36,93 @@ public class StockBatchConfiguration {
 
     private final StockCollector stockCollector;
     private final StockRepository stockRepository;
+    private final StockCodeRepository stockCodeRepository;
     private final JobRepository jobRepository;
     private final PlatformTransactionManager transactionManager;
+    @Autowired
+    private StockItemProcessor stockItemProcessor;
+    @Autowired
+    private StockWriter stockWriter;
+    @Autowired
+    private DataSource dataSource;
 
     @Bean
-    public Job collectStockJob() {
+    public ItemReader<StockCode> stockCodeItemReader() throws Exception {
+        JdbcPagingItemReader<StockCode> reader = new JdbcPagingItemReader<>();
+        reader.setDataSource(dataSource);
+        reader.setPageSize(10);
+        reader.setRowMapper(new BeanPropertyRowMapper<>(StockCode.class));
+        reader.setQueryProvider(pagingQueryProvider());
+        return reader;
+    }
+
+    @Bean
+    public PagingQueryProvider pagingQueryProvider() throws Exception {
+        SqlPagingQueryProviderFactoryBean factoryBean = new SqlPagingQueryProviderFactoryBean();
+        factoryBean.setDataSource(dataSource);
+        factoryBean.setSelectClause("SELECT code");
+        factoryBean.setFromClause("FROM stock_code");
+        factoryBean.setSortKey("code");
+        return factoryBean.getObject();
+    }
+
+    @Bean
+    public Job collectStockJob() throws Exception {
         return new JobBuilder("collectStockJob", jobRepository)
-                .start(collectStockStep())
+                .start(deleteAllInBatchStep())
+                .next(getStockSymbolListStep())
+                .next(stockInformationStep(stockCodeItemReader()))
                 .build();
     }
 
     @Bean
-    public Step collectStockStep() {
-        return new StepBuilder("collectStockStep", jobRepository)
-                .tasklet(collectStockTasklet(), transactionManager) // Pass transactionManager
+    public Step deleteAllInBatchStep() {
+        return new StepBuilder("deleteAllInBatchStep", jobRepository)
+                .tasklet(deleteAllInBatchTasklet(), transactionManager)
                 .build();
     }
 
     @Bean
-    public Tasklet collectStockTasklet() {
+    public Tasklet deleteAllInBatchTasklet() {
         return (contribution, chunkContext) -> {
-            log.info(">>>>> Stock data collection batch job started");
-
-            // 1. Delete existing data (within a transaction managed by the Tasklet)
-            log.info("Deleting existing stock data...");
-            stockRepository.deleteAllInBatch(); // Use deleteAllInBatch for efficiency
-            log.info("Existing stock data deleted.");
-
-            // 2. Fetch stock symbols
-            log.info("Fetching stock symbols...");
-            List<String> stockCode = stockCollector.getStockSymbolList();
-            log.info("Total stock code count : {}", stockCode.size());
-
-            // 3. Fetch stock information
-            log.info("Fetching stock information...");
-            List<StockDto> stockDataList = stockCollector.getStockInformations(stockCode);
-            log.info("Total stock data count : {}", stockDataList.size());
-
-            // 4. Convert DTOs to Entities
-            List<Stock> stocks = new ArrayList<>();
-            for (StockDto stockData : stockDataList) {
-                stocks.add(stockData.toEntity());
-            }
-
-            // 5. Save entities (within the same transaction)
-            log.info("Saving new stock data to DB...");
-            stockRepository.saveAll(stocks);
-            log.info("New stock data saved. Total {} records.", stocks.size());
-
-            log.info(">>>>> Stock data collection batch job finished");
+            log.info(">>>>> Deleting existing stock data...");
+            stockRepository.deleteAllInBatch();
+            log.info(">>>>> Existing stock data deleted.");
             return RepeatStatus.FINISHED;
         };
+    }
+
+    @Bean
+    public Step getStockSymbolListStep() {
+        return new StepBuilder("getStockSymbolListStep", jobRepository)
+                .tasklet(getStockSymbolListTasklet(), transactionManager)
+                .build();
+    }
+
+    @Bean
+    public Tasklet getStockSymbolListTasklet() {
+        return (contribution, chunkContext) -> {
+            log.info(">>>>> Fetching stock symbols...");
+            List<String> stockCode = stockCollector.getStockSymbolList();
+            log.info("Total stock code count : {}", stockCode.size());
+            List<StockCode> stockCodeEntities = stockCode.stream().map(code -> {
+                StockCode stockCodeEntity = new StockCode();
+                stockCodeEntity.setCode(code);
+                return stockCodeEntity;
+            }).collect(Collectors.toList());
+            stockCodeRepository.saveAll(stockCodeEntities);
+            log.info(">>>>> Stock symbols fetched and saved to DB.");
+            return RepeatStatus.FINISHED;
+        };
+    }
+
+    @Bean
+    public Step stockInformationStep(ItemReader<StockCode> stockCodeItemReader) throws Exception {
+        return new StepBuilder("stockInformationStep", jobRepository)
+                .<StockCode, Stock>chunk(10, transactionManager)
+                .reader(stockCodeItemReader)
+                .processor(stockItemProcessor)
+                .writer(stockWriter)
+                .build();
     }
 }
