@@ -37,7 +37,7 @@ public class ApiProcessorImpl implements ApiProcessor {
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             String responseBody = response.body();
 
-            if (responseBody.contains("Error Message")) {
+            if (responseBody.contains("Error Message") || responseBody.contains("limit reached")) {
                 if (retryCount == MAX_RETRY_COUNT) {
                     throw new ResponseStatusException(HttpStatus.TOO_MANY_REQUESTS, "Max retry attempts exceeded for URL: " + url);
                 }
