@@ -68,7 +68,7 @@ public class StockBatchConfiguration {
 
     @Bean
     public Job collectStockJob() throws Exception {
-        return new JobBuilder("collectStockJob", jobRepository)
+        return new JobBuilder("collectStockJob" + new java.text.SimpleDateFormat("yyyyMMddHHmmss").format(new java.util.Date()), jobRepository)
                 .start(deleteAllInBatchStep())
                 .next(getStockSymbolListStep())
                 .next(stockInformationStep(stockCodeItemReader()))
