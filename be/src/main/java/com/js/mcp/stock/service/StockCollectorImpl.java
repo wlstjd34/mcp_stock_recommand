@@ -87,7 +87,6 @@ public class StockCollectorImpl implements StockCollector {
     @Override
     public Optional<StockDto> getStockInformation(String symbol) throws IOException, InterruptedException {
         String url = FINNHUB_BASE_URL + "/stock/metric?symbol=" + symbol + "&metric=all&token=" + finnhubToken;
-        log.info("Requesting stock information for symbol: {}", symbol);
 
         String responseBody = apiProcessor.callApi(url);
 
