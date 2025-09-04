@@ -17,6 +17,7 @@ public class ApiProcessorImpl implements ApiProcessor {
 
     private static final int MAX_RETRY_COUNT = 5;
     private static final int RETRY_DELAY_MS = 70000;
+    private static final int RETRY_CONNECTION_MS = 5000;
 
     private final HttpClient httpClient = HttpClient.newHttpClient();
     /**
@@ -26,24 +27,31 @@ public class ApiProcessorImpl implements ApiProcessor {
      * @throws IOException, InterruptedException
      */
     @Override
-    public String callApi(String url) throws IOException, InterruptedException {
+    public String callApi(String url) throws InterruptedException {
         int retryCount = 0;
         while (retryCount <= MAX_RETRY_COUNT) {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(url))
                     .GET()
                     .build();
+            String responseBody = "";
+            try {
+                HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+                responseBody = response.body();
 
-            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-            String responseBody = response.body();
-
-            if (responseBody.contains("Error Message") || responseBody.contains("limit reached")) {
-                if (retryCount == MAX_RETRY_COUNT) {
-                    throw new ResponseStatusException(HttpStatus.TOO_MANY_REQUESTS, "Max retry attempts exceeded for URL: " + url);
+                if (responseBody.contains("Error Message") || responseBody.contains("limit reached")) {
+                    if (retryCount == MAX_RETRY_COUNT) {
+                        throw new ResponseStatusException(HttpStatus.TOO_MANY_REQUESTS, "Max retry attempts exceeded for URL: " + url);
+                    }
+                    retryCount++;
+                    log.warn("Error Message found. Retrying in {} seconds... (Attempt {}/{})", RETRY_DELAY_MS / 1000, retryCount, MAX_RETRY_COUNT);
+                    Thread.sleep(RETRY_DELAY_MS);
+                    continue; // Retry the API call
                 }
+            } catch (Exception e) {
                 retryCount++;
-                log.warn("Error Message found. Retrying in {} seconds... (Attempt {}/{})", RETRY_DELAY_MS / 1000, retryCount, MAX_RETRY_COUNT);
-                Thread.sleep(RETRY_DELAY_MS);
+                log.warn("Unexpected Exception. Retrying in {} seconds... (Attempt {}/{})", RETRY_CONNECTION_MS / 1000, retryCount, MAX_RETRY_COUNT);
+                Thread.sleep(RETRY_CONNECTION_MS);
                 continue; // Retry the API call
             }
 
