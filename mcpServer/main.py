@@ -10,7 +10,7 @@ mcp = FastMCP("mcpServer")
 
 DB_HOST = 'localhost'
 DB_PORT = 5432
-DB_NAME = 'postgres'
+DB_NAME = 'jsjsjs'
 DB_USER = 'jsjsjs'
 DB_PASSWORD = 'jsjsjs'
 ALPHA_KEY = '' # fill this field
@@ -39,8 +39,8 @@ def execute_query(query, params=None):
         if conn:
             conn.close()
 
-@mcp.tool()
-def get_lowest_pe_ttm(limit:int=80) -> str:
+#@mcp.tool()
+def get_lowest_pe_ttm(limit:int=100) -> str:
     query = """
         SELECT * FROM stock
         WHERE pettm IS NOT NULL AND pettm != 0.0
@@ -51,7 +51,7 @@ def get_lowest_pe_ttm(limit:int=80) -> str:
     return records
 
 @mcp.tool()
-def get_lowest_pb_quarterly(limit:int=50) -> str:
+def get_lowest_pb_quarterly(limit:int=40) -> str:
     query = """
         SELECT * FROM stock
         WHERE pb_quarterly IS NOT NULL and pb_quarterly != 0.0
@@ -61,8 +61,8 @@ def get_lowest_pb_quarterly(limit:int=50) -> str:
     records = execute_query(query, (limit,))
     return records
 
-@mcp.tool()
-def get_highest_dividend_yield(limit:int=50) -> str:
+#@mcp.tool()
+def get_highest_dividend_yield(limit:int=80) -> str:
     query = """
         SELECT * FROM stock
         WHERE dividend_yield_indicated_annual IS NOT NULL and dividend_yield_indicated_annual != 0.0
@@ -72,8 +72,8 @@ def get_highest_dividend_yield(limit:int=50) -> str:
     records = execute_query(query, (limit,))
     return records
 
-@mcp.tool()
-def get_highest_roe_ttm(limit:int=50) -> str:
+#@mcp.tool()
+def get_highest_roe_ttm(limit:int=40) -> str:
     query = """
         SELECT * FROM stock
         WHERE roettm IS NOT NULL and roettm !=0.0
